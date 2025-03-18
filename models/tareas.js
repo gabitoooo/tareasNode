@@ -24,6 +24,15 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "Tareas",
     }
   );
+
+  Tareas.prototype.toJSON=function(){
+    let values={...this.get()};
+    delete values.usuarioId;
+    delete values.createdAt;
+    delete values.updatedAt;
+    return values;
+
+  }
   Tareas.associate = (models) => {
     Tareas.belongsTo(models.Usuarios, { foreignKey: "usuarioId" });
   };

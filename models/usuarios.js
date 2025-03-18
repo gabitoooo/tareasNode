@@ -30,8 +30,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  Usuarios.prototype.toJSON = function () {
+    let values = { ...this.get() };
+
+    delete values.password;
+    return values;
+  };
+
   Usuarios.associate = (models) => {
-    Usuarios.hasMany(models.Tareas,{ foreignKey: "usuarioId" });
+    Usuarios.hasMany(models.Tareas, { foreignKey: "usuarioId" });
   };
 
   return Usuarios;

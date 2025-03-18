@@ -13,11 +13,11 @@ const {
 const { route } = require("./auth");
 /* GET users listing. */
 
-//router.use("/users", autenticar);
+router.use("/users", autenticar);
 
 router.get("/users", get);
-router.get("/users/:id", store);
-router.post("/users", show);
+router.get("/users/:id", show);
+router.post("/users", store);
 router.put("/users/:id", update);
 router.delete("/users/:id", destroy);
 

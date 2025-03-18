@@ -33,18 +33,3 @@ exports.destroy = async (req, res) => {
     res.status(500).json({ error: "Error al eliminar el usuario" });
   }
 };
-
-exports.showTasks = async (req, res) => {
-  try {
-    const user = await Usuarios.findByPk(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-    const data = await Tareas.findAll({
-      where: {
-        usuarioId: user.id,
-      },
-    });
-    res.json(data);
-  } catch (error) {}
-};

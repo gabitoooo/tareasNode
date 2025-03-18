@@ -10,7 +10,7 @@ const autenticar = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secreto");
-    req.usuario = decoded;
+    req.usuario = decoded.usuario;
     next();
   } catch (error) {
     res.status(401).json({ mensaje: "no autorizado" });
