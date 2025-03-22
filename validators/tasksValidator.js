@@ -24,6 +24,13 @@ const validarUpdate = [
           "No se puede modificar la tarea por que esta en estado completado"
         );
       }
+      req.tarea = tarea;
+      if (
+        (req.body.estado === "PROGRESO" && tarea.estado === "PROGRESO") ||
+        (req.body.estado === "PENDIENTE" && tarea.estado === "PENDIENTE")
+      ) {
+        return true;
+      }
       if (req.body.estado === "PROGRESO" && tarea.estado !== "PENDIENTE") {
         throw new Error(
           "Solo se puede marcar como en progreso si está en pendiente."
@@ -40,8 +47,6 @@ const validarUpdate = [
       if (req.body.estado === "COMPLETADA" && tarea.estado !== "PROGRESO") {
         throw new Error("Solo se puede marcar como completada en progreso");
       }
-
-      req.tarea = tarea;
       return true;
     }),
 ];
@@ -57,7 +62,10 @@ const validateDataRegister = [
     .withMessage("la descripcion es requerida")
     .isString()
     .withMessage("el campo solo permite texto"),
-  check("fechaLimite").isISO8601().withMessage("La fecha no es valida"),
+  check("fechaLimite")
+    .optional()
+    .isISO8601()
+    .withMessage("La fecha no es valida"),
   /*  check("fechaLimite")
     .notEmpty()
     .withMessage("la fechaLimite es requerida")
@@ -81,10 +89,7 @@ validateFiltro = [
         throw new Error("el estado enviado no esta permitido");
       }
     }),
-  check("fecha")
-    .optional()
-    .isISO8601()
-    .withMessage("La fecha no es valida"),
+  check("fecha").optional().isISO8601().withMessage("La fecha no es valida"),
   check("search")
     .optional()
     .isString()

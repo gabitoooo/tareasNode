@@ -14,10 +14,17 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "tasks_rwjk_user",
+    "password": "yyOzM6Sbg7jq0R1REXdeDLXLEGqRsOO0",
+    "port": 5432,
+    "database": "tasks_rwjk",
+    "host": "dpg-cvfdutggph6c73bc0r2g-a",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   }
 }
