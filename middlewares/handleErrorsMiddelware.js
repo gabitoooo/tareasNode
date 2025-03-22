@@ -1,10 +1,11 @@
 const { validationResult } = require("express-validator");
-const manejarErrores = (req, res, next) => {
+
+const validarCampos = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errores: errors.array() });
+    return res.status(422).json({ errors: errors.array() });
   }
-  next();
+  next(); // Si no hay errores, continúa con el siguiente middleware/controlador
 };
 
-module.exports = { manejarErrores };
+module.exports = validarCampos;

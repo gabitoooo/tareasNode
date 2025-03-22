@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Tareas.prototype.toJSON=function(){
     let values={...this.get()};
-    delete values.usuarioId;
+   // delete values.usuarioId;
     delete values.createdAt;
     delete values.updatedAt;
     return values;

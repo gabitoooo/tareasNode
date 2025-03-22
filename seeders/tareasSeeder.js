@@ -3,17 +3,15 @@
 /** @type {import('sequelize-cli').Migration} */
 const { faker } = require("@faker-js/faker");
 const { Usuarios } = require("../models");
+const {estados} = require("../validators/tasksValidator");
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Obtener todos los usuarios creados anteriormente
-    const usuarios = await Usuarios.findAll();
-    // Si no hay usuarios, no se crean tareas
+  async up(queryInterface, Sequelize) {    
+    const usuarios = await Usuarios.findAll(); 
     if (usuarios.length === 0) return;
 
-    const estados = ["PENDIENTE", "REALIZADO", "ELIMINADO"];
+    //const estados = ["PENDIENTE","PROGRESO","COMPLETADA" ];
     const tareas = [];
-
     usuarios.forEach((usuario) => {
       for (let i = 0; i < 10; i++) {
         tareas.push({

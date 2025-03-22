@@ -1,7 +1,7 @@
 const { check } = require("express-validator");
 
-const { Tareas } = require("/models"); // Importa el modelo de Tareas
-const estados = ["PENDIENTE", "PROGRESO", "COMPLETADO"];
+const { Tareas } = require("../models"); // Importa el modelo de Tareas
+const estados = ["PENDIENTE", "PROGRESO", "COMPLETADA"];
 
 const validarUpdate = [
   check("id")
@@ -9,15 +9,20 @@ const validarUpdate = [
     .withMessage("El id debe ser un número entero")
     .notEmpty()
     .withMessage("El id es requerido")
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       const tarea = await Tareas.findByPk(value);
-      req.tarea = tarea;
-      if (!tarea || tarea.usuarioId !== req.usuario.id) {
+      console.log(req.user_id);
+      if (!tarea || tarea.usuarioId !== req.user_id) {
         throw new Error("la tarea no existe");
       }
 
       if (!estados.includes(req.body.estado)) {
         throw new Error("el estado enviado no esta permitido");
+      }
+      if (tarea.estado === "COMPLETADA") {
+        throw new Error(
+          "No se puede modificar la tarea por que esta en estado completado"
+        );
       }
       if (req.body.estado === "PROGRESO" && tarea.estado !== "PENDIENTE") {
         throw new Error(
@@ -35,20 +40,13 @@ const validarUpdate = [
       if (req.body.estado === "COMPLETADA" && tarea.estado !== "PROGRESO") {
         throw new Error("Solo se puede marcar como completada en progreso");
       }
-      if (tarea.estado === "COMPLETADA") {
-        throw new Error(
-          "No se puede modificar la tarea por que esta en estado completado"
-        );
-      }
+
+      req.tarea = tarea;
       return true;
     }),
 ];
 
 const validateDataRegister = [
-  check("id")
-    .isInt.withMessage("el valor del identificador no esta permitido")
-    .notEmpty()
-    .withMessage("El id es requerido"),
   check("titulo")
     .notEmpty()
     .withMessage("el titulo es requerido")
@@ -59,7 +57,8 @@ const validateDataRegister = [
     .withMessage("la descripcion es requerida")
     .isString()
     .withMessage("el campo solo permite texto"),
-  check("fechaLimite")
+  check("fechaLimite").isISO8601().withMessage("La fecha no es valida"),
+  /*  check("fechaLimite")
     .notEmpty()
     .withMessage("la fechaLimite es requerida")
     .isISO8601()
@@ -71,6 +70,30 @@ const validateDataRegister = [
         );
       }
       return true;
-    }),
+    }), */
 ];
-module.exports = { validarUpdate, validateDataRegister };
+
+validateFiltro = [
+  check("estado")
+    .optional()
+    .custom(async (value) => {
+      if (!estados.includes(value)) {
+        throw new Error("el estado enviado no esta permitido");
+      }
+    }),
+  check("fecha")
+    .optional()
+    .isISO8601()
+    .withMessage("La fecha no es valida"),
+  check("search")
+    .optional()
+    .isString()
+    .withMessage("el campo solo permite texto"),
+];
+
+module.exports = {
+  validarUpdate,
+  validateDataRegister,
+  validateFiltro,
+  estados,
+};

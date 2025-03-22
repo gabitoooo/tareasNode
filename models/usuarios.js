@@ -16,24 +16,20 @@ module.exports = (sequelize, DataTypes) => {
     {
       nombre: DataTypes.STRING,
       email: DataTypes.STRING,
-      password: DataTypes.STRING,
-      admin: DataTypes.BOOLEAN,
+      password: DataTypes.STRING,    
     },
     {
       sequelize,
-      modelName: "Usuarios",
-      hooks: {
-        beforeCreate: async (usuario) => {
-          usuario.password = await bcrypt.hash(usuario.password, 20);
-        },
-      },
+      modelName: "Usuarios",    
     }
   );
 
   Usuarios.prototype.toJSON = function () {
-    let values = { ...this.get() };
-
+    let values = { ...this.get() };    
     delete values.password;
+    delete values.id;
+    delete values.createdAt;
+    delete values.updatedAt;
     return values;
   };
 

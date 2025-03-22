@@ -1,19 +1,30 @@
 const { Usuarios } = require("../models");
-const { Tareas } = require("../models");
+const bcrypt = require("bcryptjs");
+
 exports.get = async (req, res) => {
   const data = await Usuarios.findAll();
   res.json(data);
 };
 exports.store = async (req, res) => {
-  const data = await Usuarios.create(req.body);
-  res.status(201).json(data);
+  try {
+    const { nombre, email, password } = req.body;
+
+    const usuario = await Usuarios.create({
+      nombre,
+      email,
+      password: await bcrypt.hash(password, 10),
+    });
+  /*   let data={...usuario.dataValues};
+    delete data.id;
+    delete data.createdAt;
+    delete data.updatedAt; */
+    res.json(usuario);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: error.message });
+  }
 };
 
-exports.show = async (req, res) => {
-  const data = await Usuarios.findByPk(req.params.id);
-  if (!data) return res.status(404).json({ error: "usuario no encontrada" });
-  res.json(data);
-};
 
 exports.update = async (req, res) => {
   const data = await Usuarios.findByPk(req.params.id);
